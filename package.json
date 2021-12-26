@@ -1,5 +1,5 @@
 {
-  "name": "3d-game",
+  "name": "grievel-story",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "build": "webpack",
     "start": "webpack-dev-server --port 8080"
   },
-  "author": "",
+  "author": "arizorin",
   "license": "ISC",
   "devDependencies": {
     "@babylonjs/core": "^4.2.0",

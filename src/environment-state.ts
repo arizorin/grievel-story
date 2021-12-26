@@ -1,4 +1,4 @@
-import {Mesh, MeshBuilder, Scene, Vector3} from "@babylonjs/core";
+import {Mesh, MeshBuilder, PhysicsImpostor, Scene, Vector3} from "@babylonjs/core";
 import {GameMaterial} from "./game-material";
 import {GameMaterialNames, gameMaterials} from "./model";
 
@@ -27,12 +27,14 @@ export class EnvironmentState {
         const ground = MeshBuilder.CreateGround("ground", {}, this.scene);
         ground.scaling = new Vector3(5,.02,100);
         ground.material = this.gameMaterials[GameMaterialNames.GROUND]
+        ground.physicsImpostor = new PhysicsImpostor(ground, PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9 }, this.scene)
     }
 
     private createBox(x: number, z: number, y: number = 0.5) {
         const box = MeshBuilder.CreateBox(`box-${x}-${z}`, {}, this.scene)
         box.position = new Vector3(x, y, z)
         box.material = this.gameMaterials[GameMaterialNames.BOX]
+        box.physicsImpostor = new PhysicsImpostor(box, PhysicsImpostor.BoxImpostor, { mass: 5, restitution: 0.9 }, this.scene)
         this.props.push(box);
     }
 }

@@ -2,6 +2,7 @@ import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 import {
+    CannonJSPlugin,
     Engine, FreeCamera,
     HemisphericLight,
     Scene, Sound,
@@ -25,6 +26,8 @@ class App {
         this.engine = new Engine(this.canvas, true)
         this.scene = new Scene(this.engine)
         window.CANNON = cannon
+        this.scene.enablePhysics(new Vector3(0, -10, 0), new CannonJSPlugin())
+        this.scene.collisionsEnabled = true
 
         const light = new HemisphericLight('sun', Vector3.Left(), this.scene)
         const camera = new FreeCamera('free-camera', Vector3.Zero(), this.scene)

@@ -1,11 +1,11 @@
 import {
     AbstractMesh, AnimationGroup, AnimationPropertiesOverride,
-    ArcRotateCamera, Color3, Color4,
+    ArcRotateCamera, Axis, Color3, Color4,
     Matrix,
     Mesh,
-    MeshBuilder, Quaternion,
+    MeshBuilder, PhysicsImpostor, Quaternion,
     Scene, SceneLoader, SceneLoaderAnimationGroupLoadingMode,
-    ShadowGenerator, StandardMaterial,
+    ShadowGenerator, StandardMaterial, Tools,
     TransformNode, UniversalCamera,
     Vector3
 } from "@babylonjs/core";
@@ -66,16 +66,13 @@ export class PlayerController extends TransformNode {
 
         this._moveDirection = this._moveDirection.scaleInPlace(this._inputAmt * 0.5);
 
-        let input = new Vector3(this.input.horizontalAxis, 0, this.input.verticalAxis); //along which axis is the direction
-        if (input.length() == 0) {//if there's no input detected, prevent rotation and keep player in same rotation
+        let input = new Vector3(this.input.horizontalAxis, 0, this.input.verticalAxis);
+        if (input.length() == 0) {
             return;
         }
 
-        // //rotation based on input & the camera angle
-        // let angle = Math.atan2(this.input.horizontalAxis, this.input.verticalAxis);
-        // angle += this.camera.rotation.y;
-        // let targ = Quaternion.FromEulerAngles(0, angle, 0);
-        // this.player.rotationQuaternion = Quaternion.Slerp(this.player.rotationQuaternion, targ, 10 * this._deltaTime);
+        const camNewRot = -this.camera.alpha + Tools.ToRadians(Math.PI / 2) * 60;
+        this.player.rotationQuaternion = Quaternion.RotationAxis(Axis.Y, camNewRot);
     }
 
 
@@ -96,8 +93,12 @@ export class PlayerController extends TransformNode {
     private async createCharacter() {
         const playerMesh = await SceneLoader.ImportMeshAsync("", "./models/", "Elf.gltf", this.scene);
         this.player = playerMesh.meshes[0]
+        this.player.checkCollisions = true
+        this.player.position.y = 22
+        this.player.physicsImpostor = new PhysicsImpostor(this.player, PhysicsImpostor.BoxImpostor, {mass: 10, restitution: 0.9 }, this.scene)
+
         this._animations = playerMesh.animationGroups
-        console.log(this._animations)
+
         this.setCamera();
     }
 
