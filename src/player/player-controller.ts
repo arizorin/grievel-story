@@ -1,9 +1,19 @@
 import {
-  AbstractMesh, Quaternion, Scene, SceneLoader, TransformNode, UniversalCamera, Vector3,
+  AbstractMesh,
+  ParticleSystem,
+  Quaternion,
+  Scene,
+  SceneLoader,
+  ShadowGenerator,
+  Texture,
+  TransformNode,
+  UniversalCamera,
+  Vector3,
 } from '@babylonjs/core';
 import { PlayerInput } from './input-controller';
 import { AnimationController } from './animation-controller';
 import { PlayerAnimation, PlayerState } from './player.model';
+import { SoundController } from '../sound-controller';
 
 export class PlayerController extends TransformNode {
   private readonly scene: Scene;
@@ -18,19 +28,25 @@ export class PlayerController extends TransformNode {
 
   private animationController: AnimationController;
 
+  private soundController: SoundController;
+
   public player: AbstractMesh;
 
   private playerState: PlayerState = PlayerState.IDLE;
 
   private playerMaxSpeed = 0.1;
 
-  constructor(scene: Scene, input: PlayerInput, canvas: HTMLCanvasElement) {
+  constructor(scene: Scene, input: PlayerInput, canvas: HTMLCanvasElement, shadowGenerator: ShadowGenerator) {
     super('player', scene);
     this.scene = scene;
     this.input = input;
     this.canvas = canvas;
 
-    this.createCharacter();
+    this.soundController = new SoundController(this.scene);
+
+    this.createCharacter().then(() => {
+      shadowGenerator.addShadowCaster(this.player);
+    });
   }
 
   private async createCharacter() {
@@ -41,6 +57,7 @@ export class PlayerController extends TransformNode {
       mesh.isPickable = false;
     });
     this.player = body;
+    this.player.receiveShadows = true;
 
     const playerAnimations: PlayerAnimation = {
       [PlayerState.IDLE]: playerMesh.animationGroups[2],
@@ -109,6 +126,9 @@ export class PlayerController extends TransformNode {
     if (input.length() === 0) {
       this.playerState = PlayerState.IDLE;
       return;
+    }
+    if (!this.soundController.stepSound.isPlaying) {
+      this.soundController.stepSound.play();
     }
     this.playerState = PlayerState.WALKING;
 
