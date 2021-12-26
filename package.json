@@ -11,8 +11,12 @@
   "author": "arizorin",
   "license": "ISC",
   "devDependencies": {
-    "@babylonjs/core": "^4.2.0",
     "@babylonjs/inspector": "^4.2.0",
+    "@typescript-eslint/eslint-plugin": "^5.8.0",
+    "@typescript-eslint/parser": "^5.8.0",
+    "eslint": "^8.5.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3",
     "html-webpack-plugin": "^5.5.0",
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.4",
@@ -21,6 +25,7 @@
     "webpack-dev-server": "^4.7.1"
   },
   "dependencies": {
+    "@babylonjs/core": "^4.2.0",
     "cannon": "^0.6.2"
   }
 }
